@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  nginx:
+    image: nginx:latest
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - water-service
+      - property-service
+      - rabbitmq
+
+  water-service:
+    build: ./water-service
+    restart: always
+    ports:
+      - "5001:5001"
+    depends_on:
+      - rabbitmq
+
+  property-service:
+    build: ./property-service
+    restart: always
+    ports:
+      - "5002:5002"
+    depends_on:
+      - rabbitmq
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
